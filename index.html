@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sevk Pusulası → Excel</title>
+<title>Sevk Pusulası → Excel v6</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 :root{
@@ -14,63 +14,50 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.04) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
-.container{position:relative;z-index:1;width:100%;max-width:900px;padding:40px 24px 80px;}
-.header{margin-bottom:36px;}
+.wrap{position:relative;z-index:1;width:100%;max-width:900px;padding:36px 20px 80px;}
+.hdr{margin-bottom:32px;}
 .tag{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
 .tag::before{content:'';width:20px;height:1px;background:var(--accent);}
-h1{font-family:var(--mono);font-size:26px;font-weight:600;line-height:1.2;margin-bottom:8px;}
-.subtitle{font-size:13px;color:var(--muted);}
-.badge-offline{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:6px;padding:4px 10px;font-family:var(--mono);font-size:11px;color:var(--accent2);margin-top:10px;}
-
-/* Drop zone */
-.drop-zone{border:1.5px dashed var(--border);border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface);position:relative;overflow:hidden;margin-bottom:20px;}
-.drop-zone::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(59,130,246,.06),transparent 70%);pointer-events:none;}
-.drop-zone:hover,.drop-zone.over{border-color:var(--accent);background:#1a2035;}
-.drop-zone.over{border-style:solid;}
-.drop-icon{font-size:36px;margin-bottom:14px;display:block;}
-.drop-title{font-family:var(--mono);font-size:14px;font-weight:600;margin-bottom:6px;}
-.drop-sub{font-size:13px;color:var(--muted);}
-.drop-sub span{color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+h1{font-family:var(--mono);font-size:24px;font-weight:600;line-height:1.2;margin-bottom:8px;}
+.sub{font-size:13px;color:var(--muted);}
+.ob{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:6px;padding:4px 10px;font-family:var(--mono);font-size:11px;color:var(--accent2);margin-top:10px;}
+.dz{border:1.5px dashed var(--border);border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface);position:relative;overflow:hidden;margin-bottom:18px;}
+.dz:hover,.dz.ov{border-color:var(--accent);background:#1a2035;}
+.dz.ov{border-style:solid;}
+.di{font-size:36px;margin-bottom:12px;display:block;}
+.dt{font-family:var(--mono);font-size:14px;font-weight:600;margin-bottom:6px;}
+.ds{font-size:13px;color:var(--muted);}
+.ds span{color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
 #fi{display:none;}
-
-/* File pill */
-.pill{display:none;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;margin-bottom:18px;font-family:var(--mono);font-size:12px;}
+.pill{display:none;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-family:var(--mono);font-size:12px;}
 .pill.on{display:flex;}
-.pill .fn{flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.pill .fs{color:var(--muted);font-size:11px;flex-shrink:0;}
-.pill .rx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;line-height:1;transition:color .15s;flex-shrink:0;}
-.pill .rx:hover{color:var(--danger);}
-
-/* Buttons */
-.btn-primary{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.05em;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:10px;}
-.btn-primary:hover:not(:disabled){background:#2563eb;transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,130,246,.3);}
-.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;}
-.btn-dl{width:100%;padding:15px;background:transparent;color:var(--accent2);border:1.5px solid var(--accent2);border-radius:10px;font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.05em;display:none;align-items:center;justify-content:center;gap:10px;margin-top:20px;}
+.fn{flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fs{color:var(--muted);font-size:11px;flex-shrink:0;}
+.rx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:2px 4px;transition:color .15s;flex-shrink:0;}
+.rx:hover{color:var(--danger);}
+.btn{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.05em;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn:hover:not(:disabled){background:#2563eb;transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,130,246,.3);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-dl{width:100%;padding:15px;background:transparent;color:var(--accent2);border:1.5px solid var(--accent2);border-radius:10px;font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.05em;display:none;align-items:center;justify-content:center;gap:10px;margin-top:16px;}
 .btn-dl.on{display:flex;}
-.btn-dl:hover{background:rgba(34,197,94,.1);transform:translateY(-1px);box-shadow:0 8px 24px rgba(34,197,94,.15);}
-
-/* Log */
-.log{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:11px;line-height:1.9;max-height:180px;overflow-y:auto;margin-bottom:20px;display:none;}
+.btn-dl:hover{background:rgba(34,197,94,.1);transform:translateY(-1px);}
+.log{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--mono);font-size:11px;line-height:1.9;max-height:200px;overflow-y:auto;margin-bottom:18px;display:none;}
 .log.on{display:block;}
 .ll{display:flex;gap:10px;}
-.ll .t{color:var(--muted);flex-shrink:0;}
-.ok .m{color:var(--accent2);}
-.er .m{color:var(--danger);}
-.di .m{color:var(--muted);}
-.in .m{color:var(--text);}
-
-/* Meta */
-.meta{display:none;flex-wrap:wrap;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:12px;}
+.ts{color:var(--muted);flex-shrink:0;}
+.ok .ms{color:var(--accent2);}
+.er .ms{color:var(--danger);}
+.di2 .ms{color:var(--muted);}
+.in .ms{color:var(--text);}
+.meta{display:none;flex-wrap:wrap;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
 .meta.on{display:flex;}
 .mi{display:flex;flex-direction:column;gap:3px;}
 .mk{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
-.mv{color:var(--text);font-weight:500;}
-
-/* Table */
+.mv{color:var(--text);font-weight:500;font-size:13px;}
 .prev{display:none;margin-bottom:4px;}
 .prev.on{display:block;}
-.slabel{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
-.sbadge{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--accent2);}
+.sl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.sb{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--accent2);}
 .tw{overflow-x:auto;border:1px solid var(--border);border-radius:10px;}
 table{width:100%;border-collapse:collapse;font-size:11px;}
 th{background:var(--surface2);padding:9px 12px;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;white-space:nowrap;border-bottom:1px solid var(--border);}
@@ -79,25 +66,23 @@ tr:last-child td{border-bottom:none;}
 tr:hover td{background:rgba(59,130,246,.04);}
 td.bk{color:var(--accent);}
 td.hc{color:var(--accent2);}
-
-/* Spinner */
 .sp{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
+<div class="wrap">
+  <div class="hdr">
     <div class="tag">Orbis / Orman Emvali</div>
     <h1>Sevk Pusulası → Excel</h1>
-    <p class="subtitle">Orbis'ten indirilen sevk pusulası PDF'ini yükle, anında Excel'e dönüştür</p>
-    <div class="badge-offline">✓ İnternet gerekmez · iOS · Android · Windows</div>
+    <p class="sub">Orbis'ten indirilen sevk pusulası PDF'ini yükle, anında Excel'e dönüştür</p>
+    <div class="ob">✓ İnternet gerekmez · iOS · Android · Windows</div>
   </div>
 
-  <div class="drop-zone" id="dz">
-    <span class="drop-icon">📄</span>
-    <div class="drop-title">PDF'i buraya sürükle</div>
-    <div class="drop-sub">ya da <span onclick="document.getElementById('fi').click()">dosya seç</span></div>
+  <div class="dz" id="dz">
+    <span class="di">📄</span>
+    <div class="dt">PDF'i buraya sürükle</div>
+    <div class="ds">ya da <span id="browse">dosya seç</span></div>
     <input type="file" id="fi" accept=".pdf">
   </div>
 
@@ -108,14 +93,14 @@ td.hc{color:var(--accent2);}
     <button class="rx" id="rx">✕</button>
   </div>
 
-  <button class="btn-primary" id="cvt" disabled>
+  <button class="btn" id="cvt" disabled>
     <div class="sp" id="sp"></div>
     <span id="bl">⚡ Excel'e Dönüştür</span>
   </button>
 
-  <div class="log" id="log"></div>
+  <div class="log" id="logEl"></div>
 
-  <div class="meta" id="meta">
+  <div class="meta" id="metaEl">
     <div class="mi"><span class="mk">İşletme</span><span class="mv" id="mI">—</span></div>
     <div class="mi"><span class="mk">Şeflik</span><span class="mv" id="mS">—</span></div>
     <div class="mi"><span class="mk">Bölme No</span><span class="mv" id="mB">—</span></div>
@@ -125,10 +110,10 @@ td.hc{color:var(--accent2);}
     <div class="mi"><span class="mk">Toplam Hacim</span><span class="mv" id="mH">—</span></div>
   </div>
 
-  <div class="prev" id="prev">
-    <div class="slabel">
+  <div class="prev" id="prevEl">
+    <div class="sl">
       <span>Önizleme — barkoda göre sıralı</span>
-      <span class="sbadge" id="rc">0 satır</span>
+      <span class="sb" id="rc">0 satır</span>
     </div>
     <div class="tw">
       <table>
@@ -141,7 +126,7 @@ td.hc{color:var(--accent2);}
     </div>
   </div>
 
-  <button class="btn-dl" id="dl">⬇ Excel İndir (.xlsx)</button>
+  <button class="btn-dl" id="dlBtn">⬇ Excel İndir (.xlsx)</button>
 </div>
 
 <script>
@@ -157,273 +142,386 @@ break;case"<bookViews":;case"<bookViews>":;case"</bookViews>":break;case"<workbo
 
 </script>
 <script>
-// ═══════════════════════════════════════════════════════════════
-// Pure JS PDF parser — no external libraries needed
-// Works on iOS Safari, Android Chrome, Windows — fully offline
-// ═══════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// Orbis Sevk Pusulası PDF → Excel  (v6 — cross-platform)
+// Works on: iOS Safari 16+, Android Chrome, Windows Chrome/Edge/Firefox
+// No external dependencies except bundled XLSX
+// ════════════════════════════════════════════════════════════════
 
-// Win-1252 → Unicode map for Turkish characters encoded as latin1
-const WIN = {'Ý':'İ','ý':'ı','Þ':'Ş','þ':'ş','Ð':'Ğ','ð':'ğ','Ý':'İ'};
-function fixTR(s){
-  return s.replace(/[ÝýÞþÐð]/g, c => WIN[c]||c);
-}
-
-// Decompress a zlib/deflate stream (raw Uint8Array → Uint8Array)
-// Uses DecompressionStream where available (all modern browsers), 
-// falls back to a tiny pure-JS inflate
-async function decompress(u8, format){
+// ── 1. INFLATE: handle zlib (78 9C) streams robustly ─────────
+// Strategy: try all known variants in order, first success wins.
+async function tryDecompress(bytes, format) {
   const ds = new DecompressionStream(format);
-  const w = ds.writable.getWriter();
-  w.write(u8); w.close();
-  const chunks=[];
+  const writer = ds.writable.getWriter();
   const reader = ds.readable.getReader();
-  while(true){const{done,value}=await reader.read();if(done)break;chunks.push(value);}
-  const total=chunks.reduce((n,c)=>n+c.length,0);
-  const out=new Uint8Array(total);let off=0;
-  chunks.forEach(c=>{out.set(c,off);off+=c.length;});
+  // Write without awaiting so we can read simultaneously
+  writer.write(bytes);
+  writer.close();
+  const chunks = [];
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+    }
+  } catch(e) {
+    throw e;
+  }
+  let total = 0;
+  chunks.forEach(c => total += c.length);
+  const out = new Uint8Array(total);
+  let off = 0;
+  chunks.forEach(c => { out.set(c, off); off += c.length; });
   return out;
 }
 
-async function inflate(u8){
-  if(typeof DecompressionStream === 'undefined')
-    throw new Error('DecompressionStream desteklenmiyor');
-  // Orbis PDFs use zlib (0x78 header). Try deflate-raw first on non-zlib, 
-  // then deflate (zlib wrapper) for 0x78 streams.
-  const isZlib = u8[0] === 0x78;
-  if(isZlib){
-    // Strip 2-byte zlib header and 4-byte adler32 trailer for deflate-raw
-    try { return await decompress(u8.slice(2, u8.length-4), 'deflate-raw'); } catch(_){}
-    // Try full zlib via 'deflate' (Chrome/Edge support this)
-    try { return await decompress(u8, 'deflate'); } catch(_){}
+async function inflate(bytes) {
+  // Orbis PDFs: zlib compressed (0x78 0x9C header)
+  // Attempt order optimised for each platform:
+  const isZlib = bytes[0] === 0x78 && (
+    bytes[1] === 0x9C || bytes[1] === 0x01 ||
+    bytes[1] === 0xDA || bytes[1] === 0x5E
+  );
+  const errors = [];
+
+  if (isZlib) {
+    // 1. Full zlib stream → 'deflate' (Chrome/Edge/Firefox on desktop + Android Chrome 80+)
+    try { return await tryDecompress(bytes, 'deflate'); } catch(e) { errors.push('deflate:'+e.message); }
+    // 2. Strip 2-byte zlib header only → 'deflate-raw' (iOS Safari, some Android)
+    try { return await tryDecompress(bytes.slice(2), 'deflate-raw'); } catch(e) { errors.push('deflate-raw-h:'+e.message); }
+    // 3. Strip header + last 4 bytes (adler32) → 'deflate-raw'
+    try { return await tryDecompress(bytes.slice(2, bytes.length - 4), 'deflate-raw'); } catch(e) { errors.push('deflate-raw-ha:'+e.message); }
+    // 4. Strip header + last 6 bytes (adler32 + possible \r\n) → 'deflate-raw'
+    try { return await tryDecompress(bytes.slice(2, bytes.length - 6), 'deflate-raw'); } catch(e) { errors.push('deflate-raw-ha6:'+e.message); }
   }
-  // Raw deflate
-  try { return await decompress(u8, 'deflate-raw'); } catch(_){}
-  try { return await decompress(u8, 'deflate'); } catch(_){}
-  throw new Error('Sıkıştırma formatı çözülemedi');
+  // 5. Raw deflate as-is
+  try { return await tryDecompress(bytes, 'deflate-raw'); } catch(e) { errors.push('deflate-raw:'+e.message); }
+
+  throw new Error('Sıkıştırma açılamadı: ' + errors.join(' | '));
 }
 
-// Parse positioned text entries from decompressed PDF page stream
-// Returns [{x, y, text}]
-function parseStream(streamText){
-  const entries=[];
-  // Match: 1 0 0 1 X Y Tm ... (optional font+color) ... (string)Tj
-  const re = /1 0 0 1 ([\d.]+) ([\d.]+) Tm[\s\S]{0,80}?\(([^)]*)\)Tj/g;
+// ── 2. FIND BYTES: search for byte pattern in Uint8Array ──────
+function findBytes(haystack, needle, startFrom = 0) {
+  outer: for (let i = startFrom; i <= haystack.length - needle.length; i++) {
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] !== needle[j]) continue outer;
+    }
+    return i;
+  }
+  return -1;
+}
+
+// ── 3. BYTES → LATIN1 STRING ──────────────────────────────────
+function bytesToLatin1(bytes) {
+  // Process in chunks to avoid call stack overflow on large arrays
+  const CHUNK = 8192;
+  let result = '';
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    result += String.fromCharCode(...bytes.subarray(i, i + CHUNK));
+  }
+  return result;
+}
+
+// ── 4. WIN-1252 TURKISH FIX ───────────────────────────────────
+const WIN = {'Ý':'İ','ý':'ı','Þ':'Ş','þ':'ş','Ð':'Ğ','ð':'ğ'};
+function fixTR(s) {
+  return s.replace(/[ÝýÞþÐð]/g, c => WIN[c] || c);
+}
+
+// ── 5. PARSE POSITIONED TEXT FROM PDF PAGE STREAM ────────────
+// Extracts [{x, y, text}] from decompressed PDF content stream
+function parseEntries(streamBytes) {
+  const text = bytesToLatin1(streamBytes);
+  const entries = [];
+  // Pattern: 1 0 0 1 X Y Tm ... (string)Tj
+  // Gap between Tm and Tj is max ~25 chars in Orbis PDFs
+  const re = /1 0 0 1 ([\d.]+) ([\d.]+) Tm[^(]{0,60}\(([^)]*)\)Tj/g;
   let m;
-  while((m=re.exec(streamText))!==null){
+  while ((m = re.exec(text)) !== null) {
     const s = fixTR(m[3]);
-    if(s.trim()) entries.push({x:parseFloat(m[1]),y:parseFloat(m[2]),text:s});
+    if (s.trim()) entries.push({ x: parseFloat(m[1]), y: parseFloat(m[2]), text: s });
   }
   return entries;
 }
 
-// Column X ranges for Orbis sevk pusulası
-const COLS={
-  adet:[40,80], agac:[85,145], odun:[145,205],
-  boy:[200,238], cap:[235,272], hacim:[272,405], barkod:[405,560]
-};
-function colOf(x){
-  for(const[k,[lo,hi]] of Object.entries(COLS)) if(x>=lo&&x<=hi) return k;
-  return null;
-}
+// ── 6. MAIN PDF PARSER ────────────────────────────────────────
+const STREAM_SIG    = [115,116,114,101,97,109];       // 'stream'
+const NEWLINE_R     = [13,10];                         // \r\n
+const NEWLINE_N     = [10];                            // \n
+const ENDSTREAM_SIG = [101,110,100,115,116,114,101,97,109]; // 'endstream'
 
-async function parsePDF(arrayBuffer){
+async function parsePDF(arrayBuffer) {
   const raw = new Uint8Array(arrayBuffer);
-  
-  // Find all stream...endstream pairs
-  const enc = new TextDecoder('latin1');
-  const text = enc.decode(raw);
-  
-  // Locate stream start/end byte offsets
-  const streamRe  = /stream\r?\n/g;
-  const endRe     = /endstream/g;
-  const starts=[], ends=[];
-  let sm;
-  while((sm=streamRe.exec(text))!==null)  starts.push(sm.index+sm[0].length);
-  while((sm=endRe.exec(text))!==null)     ends.push(sm.index);
-  
-  if(!starts.length) throw new Error('PDF stream bulunamadı');
-  
-  // Try each stream; collect all text entries
-  let allEntries=[];
-  for(let i=0;i<Math.min(starts.length,ends.length);i++){
-    const chunk = raw.slice(starts[i], ends[i]);
-    if(chunk.length<10) continue;
-    try{
-      const dec = await inflate(chunk);
-      const txt = new TextDecoder('latin1').decode(dec);
-      const entries = parseStream(txt);
-      if(entries.length>0) allEntries.push(...entries);
-    }catch(e){ /* skip non-zlib streams */ }
+
+  // Find stream start positions (byte after \r\n or \n following 'stream')
+  const streamStarts = [];
+  let pos = 0;
+  while (true) {
+    const idx = findBytes(raw, STREAM_SIG, pos);
+    if (idx === -1) break;
+    // Check it's not inside 'endstream'
+    const prevWord = bytesToLatin1(raw.slice(Math.max(0, idx-3), idx));
+    if (!prevWord.includes('end')) {
+      // Skip 'stream' + \r\n or \n
+      let dataStart = idx + 6;
+      if (raw[dataStart] === 13 && raw[dataStart+1] === 10) dataStart += 2;
+      else if (raw[dataStart] === 10) dataStart += 1;
+      streamStarts.push(dataStart);
+    }
+    pos = idx + 6;
   }
-  
-  if(!allEntries.length) throw new Error('PDF içinden metin çıkarılamadı');
-  
-  // ── Extract meta (y > 720) ──────────────────────────────────
-  const metaEntries = allEntries.filter(e=>e.y>720).sort((a,b)=>b.y-a.y||a.x-b.x);
+
+  // Find endstream positions
+  const streamEnds = [];
+  pos = 0;
+  while (true) {
+    const idx = findBytes(raw, ENDSTREAM_SIG, pos);
+    if (idx === -1) break;
+    // Strip trailing \r\n before endstream
+    let dataEnd = idx;
+    if (raw[dataEnd-2] === 13 && raw[dataEnd-1] === 10) dataEnd -= 2;
+    else if (raw[dataEnd-1] === 10) dataEnd -= 1;
+    streamEnds.push(dataEnd);
+    pos = idx + 9;
+  }
+
+  if (!streamStarts.length) throw new Error('PDF stream bulunamadı');
+
+  // Try each stream pair
+  let allEntries = [];
+  const pairs = Math.min(streamStarts.length, streamEnds.length);
+
+  for (let i = 0; i < pairs; i++) {
+    const start = streamStarts[i];
+    const end = streamEnds[i];
+    if (end <= start || end - start > 2_000_000) continue; // sanity check
+
+    const chunk = raw.slice(start, end);
+    if (chunk.length < 4) continue;
+
+    // Only process zlib-compressed streams (0x78 header)
+    if (chunk[0] !== 0x78) continue;
+
+    try {
+      const decompressed = await inflate(chunk);
+      const entries = parseEntries(decompressed);
+      if (entries.length > 10) { // must have meaningful content
+        allEntries.push(...entries);
+      }
+    } catch(e) {
+      // skip non-decompressible streams
+    }
+  }
+
+  if (!allEntries.length) {
+    throw new Error('PDF içinden metin çıkarılamadı. Lütfen geçerli bir Orbis sevk pusulası yükleyin.');
+  }
+
+  // ── Extract meta (y > 720) ────────────────────────────────
+  const metaEntries = allEntries.filter(e => e.y > 720).sort((a,b) => b.y-a.y || a.x-b.x);
   const meta = {};
-  
-  // Build label→value map: label at x~32-100, value follows on same y at higher x
+
   const metaLines = {};
-  metaEntries.forEach(e=>{
+  metaEntries.forEach(e => {
     const yk = Math.round(e.y);
-    if(!metaLines[yk]) metaLines[yk]=[];
+    if (!metaLines[yk]) metaLines[yk] = [];
     metaLines[yk].push(e);
   });
-  
-  const labelMap = {
-    'İŞLETMESİ':'isletme','ŞEFLİĞİ':'seflik','BÖLME NO':'bolme',
-    'İSTİF YERİ':'istif','AĞAÇ CİNSİ':'agac','EMVAL ÇEŞİDİ':'cesit'
+
+  const LABELS = {
+    'İŞLETMESİ':'isletme', 'ŞEFLİĞİ':'seflik',
+    'BÖLME NO':'bolme', 'İSTİF YERİ':'istif', 'AĞAÇ CİNSİ':'agac'
   };
-  
-  for(const [yk, items] of Object.entries(metaLines)){
-    const sorted = items.sort((a,b)=>a.x-b.x);
-    for(let i=0;i<sorted.length-1;i++){
-      const label = sorted[i].text.replace(/\s*:\s*$/,'').trim();
-      for(const [k,v] of Object.entries(labelMap)){
-        if(label.includes(k)){ meta[v]=sorted[i+1].text; break; }
+
+  for (const items of Object.values(metaLines)) {
+    const sorted = items.sort((a,b) => a.x-b.x);
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const label = sorted[i].text.replace(/\s*:\s*$/, '').trim();
+      for (const [k,v] of Object.entries(LABELS)) {
+        if (label.includes(k)) { meta[v] = sorted[i+1].text; break; }
       }
     }
   }
-  
-  // ── Extract data rows (y < 720, y > 130) ───────────────────
-  const dataEntries = allEntries.filter(e=>e.y<720 && e.y>130);
-  
-  // Group by Y (snap to 2px grid)
+
+  // ── Extract data rows (720 > y > 130) ────────────────────
+  // Column X ranges for Orbis sevk pusulası layout:
+  const COLS = {
+    adet:  [40,  80],
+    agac:  [85, 145],
+    odun:  [145, 205],
+    boy:   [200, 238],
+    cap:   [235, 272],
+    hacim: [272, 405],
+    barkod:[405, 560],
+  };
+
+  function colOf(x) {
+    for (const [k,[lo,hi]] of Object.entries(COLS)) {
+      if (x >= lo && x <= hi) return k;
+    }
+    return null;
+  }
+
+  const dataEntries = allEntries.filter(e => e.y < 720 && e.y > 130);
   const rowMap = {};
-  dataEntries.forEach(e=>{
+  dataEntries.forEach(e => {
     const col = colOf(e.x);
-    if(!col) return;
-    const yk = Math.round(e.y/2)*2;
-    if(!rowMap[yk]) rowMap[yk]={};
+    if (!col) return;
+    const yk = Math.round(e.y / 2) * 2;
+    if (!rowMap[yk]) rowMap[yk] = {};
     rowMap[yk][col] = e.text;
   });
-  
-  // Build row array — only rows with a barkod
+
   const rows = [];
-  for(const yk of Object.keys(rowMap).map(Number).sort((a,b)=>b-a)){
+  for (const yk of Object.keys(rowMap).map(Number).sort((a,b) => b-a)) {
     const r = rowMap[yk];
-    if(!r.barkod) continue;
+    if (!r.barkod) continue;
     rows.push([
-      r.adet||'1',
-      r.agac||'',
-      r.odun||'',
-      (r.boy||'').replace(',','.'),
-      r.cap||'',
-      (r.hacim||'').replace(',','.'),
-      r.barkod
+      r.adet  || '1',
+      r.agac  || '',
+      r.odun  || '',
+      (r.boy  || '').replace(',', '.'),
+      r.cap   || '',
+      (r.hacim|| '').replace(',', '.'),
+      r.barkod,
     ]);
   }
-  
+
   // Sort by barkod A→Z
-  rows.sort((a,b)=>a[6].localeCompare(b[6]));
-  
-  return {meta, rows};
+  rows.sort((a, b) => a[6].localeCompare(b[6]));
+
+  return { meta, rows };
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
 // UI
-// ═══════════════════════════════════════════════════════════════
-let file=null, rows=[], meta={};
-const $=id=>document.getElementById(id);
-const dz=$('dz'),fi=$('fi'),pill=$('pill'),pn=$('pn'),ps=$('ps'),rx=$('rx');
-const cvt=$('cvt'),sp=$('sp'),bl=$('bl'),logEl=$('log'),metaEl=$('meta');
-const prevEl=$('prev'),tb=$('tb'),rc=$('rc'),dlBtn=$('dl');
+// ════════════════════════════════════════════════════════════════
+let currentFile = null, rows = [], meta = {};
 
-dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over');});
-dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
-dz.addEventListener('drop',e=>{
-  e.preventDefault();dz.classList.remove('over');
-  const f=e.dataTransfer.files[0];
-  if(f&&(f.type==='application/pdf'||f.name.endsWith('.pdf'))) setFile(f);
+const $ = id => document.getElementById(id);
+const dz=$('dz'), fi=$('fi'), browse=$('browse');
+const pill=$('pill'), pn=$('pn'), ps=$('ps'), rx=$('rx');
+const cvt=$('cvt'), sp=$('sp'), bl=$('bl');
+const logEl=$('logEl'), metaEl=$('metaEl');
+const prevEl=$('prevEl'), tb=$('tb'), rc=$('rc'), dlBtn=$('dlBtn');
+
+// File picking
+browse.addEventListener('click', e => { e.stopPropagation(); fi.click(); });
+fi.addEventListener('change', () => { if (fi.files[0]) setFile(fi.files[0]); });
+dz.addEventListener('click', () => fi.click());
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('ov'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('ov'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('ov');
+  const f = e.dataTransfer.files[0];
+  if (f && (f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf'))) setFile(f);
   else alert('Lütfen bir PDF dosyası seçin.');
 });
-fi.addEventListener('change',()=>{if(fi.files[0])setFile(fi.files[0]);});
-dz.addEventListener('click',e=>{if(e.target===dz||e.target.classList.contains('drop-icon')||e.target.classList.contains('drop-title'))fi.click();});
-rx.addEventListener('click',()=>{file=null;pill.classList.remove('on');cvt.disabled=true;fi.value='';reset();});
+rx.addEventListener('click', () => { currentFile=null; pill.classList.remove('on'); cvt.disabled=true; fi.value=''; reset(); });
 
-function setFile(f){
-  file=f;pn.textContent=f.name;ps.textContent=(f.size/1024).toFixed(1)+' KB';
-  pill.classList.add('on');cvt.disabled=false;reset();
+function setFile(f) {
+  currentFile = f;
+  pn.textContent = f.name;
+  ps.textContent = (f.size / 1024).toFixed(1) + ' KB';
+  pill.classList.add('on');
+  cvt.disabled = false;
+  reset();
 }
-function reset(){
-  logEl.className='log';logEl.innerHTML='';
-  metaEl.className='meta';prevEl.className='prev';
-  dlBtn.className='btn-dl';tb.innerHTML='';rows=[];meta={};
+
+function reset() {
+  logEl.className = 'log'; logEl.innerHTML = '';
+  metaEl.className = 'meta'; prevEl.className = 'prev';
+  dlBtn.className = 'btn-dl'; tb.innerHTML = '';
+  rows = []; meta = {};
 }
-function log(msg,type='in'){
+
+function log(msg, type='in') {
   logEl.classList.add('on');
-  const ts=new Date().toTimeString().slice(0,8);
-  const d=document.createElement('div');
-  d.className='ll '+type;
-  d.innerHTML=`<span class="t">${ts}</span><span class="m">${msg}</span>`;
-  logEl.appendChild(d);logEl.scrollTop=logEl.scrollHeight;
-}
-function setLoading(on){
-  cvt.disabled=on;sp.style.display=on?'block':'none';
-  bl.textContent=on?'İşleniyor…':"⚡ Excel'e Dönüştür";
+  const ts = new Date().toTimeString().slice(0,8);
+  const d = document.createElement('div');
+  d.className = 'll ' + type;
+  d.innerHTML = `<span class="ts">${ts}</span><span class="ms">${msg}</span>`;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
 }
 
-cvt.addEventListener('click',async()=>{
-  if(!file)return;
-  reset();setLoading(true);
-  try{
-    log('PDF okunuyor…','di');
-    const ab=await file.arrayBuffer();
-    log('Veri çıkarılıyor…','di');
-    const result=await parsePDF(ab);
-    rows=result.rows; meta=result.meta;
-    if(!rows.length){log('Emval satırı bulunamadı. PDF yapısı farklı olabilir.','er');setLoading(false);return;}
-    const total=rows.reduce((s,r)=>s+parseFloat(r[5]||0),0);
-    log(`✓ ${rows.length} emval satırı (barkoda göre sıralı)`,'ok');
-    log(`✓ Toplam hacim: ${total.toFixed(3)} m³`,'ok');
-    showMeta(rows.length,total);
+function setLoading(on) {
+  cvt.disabled = on;
+  sp.style.display = on ? 'block' : 'none';
+  bl.textContent = on ? 'İşleniyor…' : "⚡ Excel'e Dönüştür";
+}
+
+cvt.addEventListener('click', async () => {
+  if (!currentFile) return;
+  reset(); setLoading(true);
+  try {
+    log('PDF okunuyor…', 'di2');
+    const ab = await currentFile.arrayBuffer();
+    log('Metin çıkarılıyor…', 'di2');
+    const result = await parsePDF(ab);
+    rows = result.rows; meta = result.meta;
+
+    if (!rows.length) {
+      log('Emval satırı bulunamadı.', 'er');
+      setLoading(false); return;
+    }
+
+    const total = rows.reduce((s,r) => s + parseFloat(r[5]||0), 0);
+    log(`✓ ${rows.length} emval satırı bulundu (barkoda göre sıralı)`, 'ok');
+    log(`✓ Toplam hacim: ${total.toFixed(3)} m³`, 'ok');
+    showMeta(rows.length, total);
     showPreview(rows);
     dlBtn.classList.add('on');
-    log('Hazır — Excel indirin.','ok');
-  }catch(e){log('Hata: '+e.message,'er');console.error(e);}
+    log('Hazır — Excel indirin.', 'ok');
+  } catch(e) {
+    log('Hata: ' + e.message, 'er');
+    console.error(e);
+  }
   setLoading(false);
 });
 
-function showMeta(adet,hacim){
-  $('mI').textContent=meta.isletme||'—';
-  $('mS').textContent=meta.seflik||'—';
-  $('mB').textContent=meta.bolme||'—';
-  $('mT').textContent=meta.istif||'—';
-  $('mA').textContent=meta.agac||'—';
-  $('mD').textContent=adet+' adet';
-  $('mH').textContent=hacim.toFixed(3)+' m³';
+function showMeta(adet, hacim) {
+  $('mI').textContent = meta.isletme || '—';
+  $('mS').textContent = meta.seflik  || '—';
+  $('mB').textContent = meta.bolme   || '—';
+  $('mT').textContent = meta.istif   || '—';
+  $('mA').textContent = meta.agac    || '—';
+  $('mD').textContent = adet + ' adet';
+  $('mH').textContent = hacim.toFixed(3) + ' m³';
   metaEl.classList.add('on');
 }
 
-function showPreview(rs){
-  tb.innerHTML='';
-  rs.slice(0,10).forEach(r=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td class="hc">${r[5]}</td><td class="bk">${r[6]}</td>`;
+function showPreview(rs) {
+  tb.innerHTML = '';
+  rs.slice(0,10).forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td class="hc">${r[5]}</td><td class="bk">${r[6]}</td>`;
     tb.appendChild(tr);
   });
-  rc.textContent=rs.length+' satır'+(rs.length>10?' · ilk 10 gösteriliyor':'');
+  rc.textContent = rs.length + ' satır' + (rs.length>10?' · ilk 10':'');
   prevEl.classList.add('on');
 }
 
-dlBtn.addEventListener('click',()=>{
-  if(!rows.length)return;
-  const wb=XLSX.utils.book_new();
-  const hd=['ADEDİ','AĞAÇ ADI','ODUN ADI','BOYU (m)','ÇAPI (cm)','HACMİ (m³)','BARKOD NO'];
-  const ws=XLSX.utils.aoa_to_sheet([hd,...rows]);
-  ws['!cols']=[{wch:7},{wch:12},{wch:12},{wch:10},{wch:10},{wch:12},{wch:14}];
-  XLSX.utils.book_append_sheet(wb,ws,'Emval');
-  const mws=XLSX.utils.aoa_to_sheet([
+dlBtn.addEventListener('click', () => {
+  if (!rows.length) return;
+  const wb = XLSX.utils.book_new();
+  const hd = ['ADEDİ','AĞAÇ ADI','ODUN ADI','BOYU (m)','ÇAPI (cm)','HACMİ (m³)','BARKOD NO'];
+  const ws = XLSX.utils.aoa_to_sheet([hd, ...rows]);
+  ws['!cols'] = [{wch:7},{wch:12},{wch:12},{wch:10},{wch:10},{wch:12},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Emval');
+  const mws = XLSX.utils.aoa_to_sheet([
     ['Alan','Değer'],
-    ['İşletme',meta.isletme||''],['Şeflik',meta.seflik||''],
-    ['Bölme No',meta.bolme||''],['İstif Yeri',meta.istif||''],
-    ['Ağaç Cinsi',meta.agac||''],
-    ['Toplam Adet',rows.length],
-    ['Toplam Hacim (m³)',rows.reduce((s,r)=>s+parseFloat(r[5]||0),0).toFixed(3)],
+    ['İşletme', meta.isletme||''],
+    ['Şeflik',  meta.seflik ||''],
+    ['Bölme No',meta.bolme  ||''],
+    ['İstif Yeri',meta.istif||''],
+    ['Ağaç Cinsi',meta.agac ||''],
+    ['Toplam Adet', rows.length],
+    ['Toplam Hacim (m³)', rows.reduce((s,r)=>s+parseFloat(r[5]||0),0).toFixed(3)],
   ]);
-  XLSX.utils.book_append_sheet(wb,mws,'Bilgiler');
-  const base=(file?.name||'sevk').replace(/\.pdf$/i,'');
-  XLSX.utils.writeFile(wb,base+'_emval.xlsx');
+  XLSX.utils.book_append_sheet(wb, mws, 'Bilgiler');
+  const base = (currentFile?.name || 'sevk').replace(/\.pdf$/i, '');
+  XLSX.utils.writeFile(wb, base + '_emval.xlsx');
 });
 </script>
 </body>
