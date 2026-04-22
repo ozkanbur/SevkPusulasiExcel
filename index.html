@@ -171,20 +171,35 @@ function fixTR(s){
 // Decompress a zlib/deflate stream (raw Uint8Array → Uint8Array)
 // Uses DecompressionStream where available (all modern browsers), 
 // falls back to a tiny pure-JS inflate
+async function decompress(u8, format){
+  const ds = new DecompressionStream(format);
+  const w = ds.writable.getWriter();
+  w.write(u8); w.close();
+  const chunks=[];
+  const reader = ds.readable.getReader();
+  while(true){const{done,value}=await reader.read();if(done)break;chunks.push(value);}
+  const total=chunks.reduce((n,c)=>n+c.length,0);
+  const out=new Uint8Array(total);let off=0;
+  chunks.forEach(c=>{out.set(c,off);off+=c.length;});
+  return out;
+}
+
 async function inflate(u8){
-  if(typeof DecompressionStream !== 'undefined'){
-    const ds = new DecompressionStream('deflate');
-    const w = ds.writable.getWriter();
-    w.write(u8); w.close();
-    const chunks=[];
-    const reader = ds.readable.getReader();
-    while(true){const{done,value}=await reader.read();if(done)break;chunks.push(value);}
-    const total=chunks.reduce((n,c)=>n+c.length,0);
-    const out=new Uint8Array(total);let off=0;
-    chunks.forEach(c=>{out.set(c,off);off+=c.length;});
-    return out;
+  if(typeof DecompressionStream === 'undefined')
+    throw new Error('DecompressionStream desteklenmiyor');
+  // Orbis PDFs use zlib (0x78 header). Try deflate-raw first on non-zlib, 
+  // then deflate (zlib wrapper) for 0x78 streams.
+  const isZlib = u8[0] === 0x78;
+  if(isZlib){
+    // Strip 2-byte zlib header and 4-byte adler32 trailer for deflate-raw
+    try { return await decompress(u8.slice(2, u8.length-4), 'deflate-raw'); } catch(_){}
+    // Try full zlib via 'deflate' (Chrome/Edge support this)
+    try { return await decompress(u8, 'deflate'); } catch(_){}
   }
-  throw new Error('DecompressionStream not supported');
+  // Raw deflate
+  try { return await decompress(u8, 'deflate-raw'); } catch(_){}
+  try { return await decompress(u8, 'deflate'); } catch(_){}
+  throw new Error('Sıkıştırma formatı çözülemedi');
 }
 
 // Parse positioned text entries from decompressed PDF page stream
