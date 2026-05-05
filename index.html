@@ -250,9 +250,8 @@ const NEWLINE_N     = [10];                            // \n
 const ENDSTREAM_SIG = [101,110,100,115,116,114,101,97,109]; // 'endstream'
 
 function formatHacim(h) {
-  const n = parseFloat(h.replace(',', '.'));
-  if (isNaN(n)) return h;
-  return n.toFixed(3).replace('.', ',');
+  const n = parseFloat((h || '').replace(',', '.'));
+  return isNaN(n) ? 0 : parseFloat(n.toFixed(3));
 }
 
 async function parsePDF(arrayBuffer) {
@@ -513,6 +512,12 @@ dlBtn.addEventListener('click', () => {
   const hd = ['ADEDİ','AĞAÇ ADI','ODUN ADI','BOYU (m)','ÇAPI (cm)','HACMİ (m³)','BARKOD NO'];
   const ws = XLSX.utils.aoa_to_sheet([hd, ...rows]);
   ws['!cols'] = [{wch:7},{wch:12},{wch:12},{wch:10},{wch:10},{wch:12},{wch:14}];
+  // F sütununu (index 5) sayı olarak formatla: virgüllü, 3 ondalık
+  const hacimFmt = '#.##0,000'; // Excel TR ondalık virgül formatı
+  for (let ri = 1; ri <= rows.length; ri++) {
+    const cellRef = 'F' + (ri + 1);
+    if (ws[cellRef]) { ws[cellRef].t = 'n'; ws[cellRef].z = '#,##0.000'; }
+  }
   XLSX.utils.book_append_sheet(wb, ws, 'Emval');
   const mws = XLSX.utils.aoa_to_sheet([
     ['Alan','Değer'],
