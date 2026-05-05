@@ -249,6 +249,12 @@ const NEWLINE_R     = [13,10];                         // \r\n
 const NEWLINE_N     = [10];                            // \n
 const ENDSTREAM_SIG = [101,110,100,115,116,114,101,97,109]; // 'endstream'
 
+function formatHacim(h) {
+  const n = parseFloat(h.replace(',', '.'));
+  if (isNaN(n)) return h;
+  return n.toFixed(3).replace('.', ',');
+}
+
 async function parsePDF(arrayBuffer) {
   const raw = new Uint8Array(arrayBuffer);
 
@@ -381,7 +387,7 @@ async function parsePDF(arrayBuffer) {
       r.odun  || '',
       (r.boy  || '').replace(',', '.'),
       r.cap   || '',
-      (r.hacim|| '').replace(',', '.'),
+      formatHacim(r.hacim || ''),
       r.barkod,
     ]);
   }
