@@ -603,6 +603,28 @@ dlBtn.addEventListener('click', () => {
     const cellRef = 'F' + (ri + 1);
     if (ws[cellRef]) { ws[cellRef].t = 'n'; ws[cellRef].z = '#,##0.000'; }
   }
+
+  // Alt toplam satırı ekle (A ve F sütunları)
+  const totalRow = rows.length + 2; // başlık + veri + 1 boş değil, hemen altına
+  const totalAdet = rows.reduce((s, r) => s + (parseInt(r[0]) || 0), 0);
+  const totalHacimVal = rows.reduce((s, r) => s + (parseFloat(r[5]) || 0), 0);
+
+  // A sütunu toplam
+  const cellA = 'A' + (rows.length + 2);
+  ws[cellA] = { t: 'n', v: totalAdet, z: '#,##0' };
+
+  // Etiket (E sütununa "TOPLAM:" yaz)
+  const cellE = 'E' + (rows.length + 2);
+  ws[cellE] = { t: 's', v: 'TOPLAM:' };
+
+  // F sütunu toplam
+  const cellF = 'F' + (rows.length + 2);
+  ws[cellF] = { t: 'n', v: parseFloat(totalHacimVal.toFixed(3)), z: '#,##0.000' };
+
+  // Hücre aralığını güncelle
+  const range = XLSX.utils.decode_range(ws['!ref']);
+  range.e.r = rows.length + 1; // 0-indexed, +1 for header, +1 for total row
+  ws['!ref'] = XLSX.utils.encode_range(range);
   XLSX.utils.book_append_sheet(wb, ws, 'Emval');
 
   // Filename: I2 value (seflik) - H2 value (yaprakNo)
