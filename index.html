@@ -346,9 +346,16 @@ async function parsePDF(arrayBuffer) {
     const sorted = items.sort((a,b) => a.x-b.x);
     for (let i = 0; i < sorted.length - 1; i++) {
       const label = sorted[i].text.replace(/\s*:\s*$/, '').trim();
+      let matched = false;
       for (const [k,v] of Object.entries(LABELS)) {
-        if (label.includes(k)) { meta[v] = sorted[i+1].text; break; }
+        if (label.includes(k)) {
+          // Take the immediately next item by x — don't continue scanning this row
+          meta[v] = sorted[i+1].text;
+          matched = true;
+          break;
+        }
       }
+      if (matched) break; // one label per row, stop scanning rest of row
     }
   }
 
@@ -547,7 +554,17 @@ dlBtn.addEventListener('click', () => {
   const wb = XLSX.utils.book_new();
   const hd = ['ADEDİ','AĞAÇ ADI','ODUN ADI','BOYU (m)','ÇAPI (cm)','HACMİ (m³)','BARKOD NO','YAPRAK NO','ŞEFLİK','BÖLME NO','PLAKA'];
   const ws = XLSX.utils.aoa_to_sheet([hd, ...rows]);
-  ws['!cols'] = [{wch:7},{wch:12},{wch:12},{wch:10},{wch:10},{wch:12},{wch:14},{wch:12},{wch:32},{wch:10},{wch:12}];
+  // Auto column width based on content
+  const allWsRows = [hd, ...rows];
+  const colCount = hd.length;
+  const colWidths = Array(colCount).fill(0);
+  allWsRows.forEach(row => {
+    row.forEach((cell, ci) => {
+      const len = String(cell ?? '').length;
+      if (len > colWidths[ci]) colWidths[ci] = len;
+    });
+  });
+  ws['!cols'] = colWidths.map(w => ({ wch: Math.min(Math.max(w + 2, 8), 50) }));
   // F sütununu (index 5) sayı olarak formatla: virgüllü, 3 ondalık
   const hacimFmt = '#.##0,000'; // Excel TR ondalık virgül formatı
   for (let ri = 1; ri <= rows.length; ri++) {
@@ -555,18 +572,13 @@ dlBtn.addEventListener('click', () => {
     if (ws[cellRef]) { ws[cellRef].t = 'n'; ws[cellRef].z = '#,##0.000'; }
   }
   XLSX.utils.book_append_sheet(wb, ws, 'Emval');
-  const mws = XLSX.utils.aoa_to_sheet([
-    ['Alan','Değer'],
-    ['İşletme', meta.isletme||''],
-    ['Şeflik',  meta.seflik ||''],
-    ['Bölme No',meta.bolme  ||''],
-    ['İstif Yeri',meta.istif||''],
-    ['Ağaç Cinsi',meta.agac ||''],
-    ['Toplam Adet', rows.length],
-    ['Toplam Hacim (m³)', rows.reduce((s,r)=>s+parseFloat(r[5]||0),0).toFixed(3)],
-  ]);
-  XLSX.utils.book_append_sheet(wb, mws, 'Bilgiler');
-  const base = (currentFile?.name || 'sevk').replace(/\.pdf$/i, '');
+
+  // Filename: I2 value (seflik) - H2 value (yaprakNo)
+  const seflikVal = (rows[0]?.[8] || '').trim();
+  const yaprakVal = (rows[0]?.[7] || '').trim();
+  const base = seflikVal && yaprakVal
+    ? seflikVal + '-' + yaprakVal
+    : (currentFile?.name || 'sevk').replace(/\.pdf$/i, '');
   const wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
   const blob = new Blob([wbout], {type:'application/octet-stream'});
   const url = URL.createObjectURL(blob);
