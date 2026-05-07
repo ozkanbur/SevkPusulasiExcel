@@ -293,23 +293,25 @@ async function parsePDF(arrayBuffer) {
 
   // Try each stream pair
   let allEntries = [];
+  const perStreamEntries = [];
   const pairs = Math.min(streamStarts.length, streamEnds.length);
 
   for (let i = 0; i < pairs; i++) {
     const start = streamStarts[i];
     const end = streamEnds[i];
-    if (end <= start || end - start > 2_000_000) continue; // sanity check
+    if (end <= start || end - start > 2_000_000) continue;
 
     const chunk = raw.slice(start, end);
     if (chunk.length < 4) continue;
-
-    // Only process zlib-compressed streams (0x78 header)
     if (chunk[0] !== 0x78) continue;
 
     try {
       const decompressed = await inflate(chunk);
       const entries = parseEntries(decompressed);
-      if (entries.length > 10) { // must have meaningful content
+      if (entries.length > 10) {
+        // tag each entry with stream index
+        entries.forEach(e => e._stream = perStreamEntries.length);
+        perStreamEntries.push(entries);
         allEntries.push(...entries);
       }
     } catch(e) {
@@ -322,7 +324,8 @@ async function parsePDF(arrayBuffer) {
   }
 
   // ── Extract meta (y > 720) ────────────────────────────────
-  const metaEntries = allEntries.filter(e => e.y > 720).sort((a,b) => b.y-a.y || a.x-b.x);
+  // Use only first stream for meta (page 1 header area)
+  const metaEntries = (perStreamEntries[0] || allEntries).filter(e => e.y > 720).sort((a,b) => b.y-a.y || a.x-b.x);
   const meta = {};
 
   const metaLines = {};
@@ -366,19 +369,36 @@ async function parsePDF(arrayBuffer) {
     return null;
   }
 
-  const dataEntries = allEntries.filter(e => e.y < 720 && e.y > 130);
+  // Process each stream independently — each page resets Y coords
   const rowMap = {};
-  dataEntries.forEach(e => {
-    const col = colOf(e.x);
-    if (!col) return;
-    const yk = Math.round(e.y / 2) * 2;
-    if (!rowMap[yk]) rowMap[yk] = {};
-    rowMap[yk][col] = e.text;
-  });
+  for (const streamEntries of perStreamEntries) {
+    // Find header Y within this stream
+    let headerY = null;
+    for (const e of streamEntries) {
+      const t = e.text.toUpperCase();
+      if (t === 'ADEDİ' || t.includes('BARKOD') || t.includes('ÜRÜN')) {
+        headerY = e.y; break;
+      }
+    }
+    if (headerY === null) {
+      const ys = streamEntries.map(e => e.y);
+      headerY = Math.max(...ys) * 0.90;
+    }
+    streamEntries
+      .filter(e => e.y < headerY - 1 && e.y > 130)
+      .forEach(e => {
+        const col = colOf(e.x);
+        if (!col) return;
+        const yk = Math.round(e.y / 2) * 2;
+        const key = e._stream + '_' + yk;
+        if (!rowMap[key]) rowMap[key] = {};
+        rowMap[key][col] = e.text;
+      });
+  }
 
   const rows = [];
-  for (const yk of Object.keys(rowMap).map(Number).sort((a,b) => b-a)) {
-    const r = rowMap[yk];
+  for (const key of Object.keys(rowMap)) {
+    const r = rowMap[key];
     if (!r.barkod) continue;
     rows.push([
       r.adet  || '1',
