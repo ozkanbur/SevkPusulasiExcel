@@ -111,11 +111,11 @@ td.hc{color:var(--accent2);}
     <div class="slogan">Özkan KANBUR &nbsp;·&nbsp; Türk Mühendisliğinin Dijital Gücü</div>
   </div>
 
+  <input type="file" id="fi" accept=".pdf">
   <div class="dz" id="dz">
     <span class="di">📄</span>
     <div class="dt">PDF'i buraya sürükle</div>
     <div class="ds">ya da <span id="browse">dosya seç</span></div>
-    <input type="file" id="fi" accept=".pdf">
   </div>
 
   <div class="pill" id="pill">
@@ -487,7 +487,7 @@ const prevEl=$('prevEl'), tb=$('tb'), rc=$('rc'), dlBtn=$('dlBtn');
 // File picking
 browse.addEventListener('click', e => { e.stopPropagation(); fi.click(); });
 fi.addEventListener('change', () => { if (fi.files[0]) setFile(fi.files[0]); });
-dz.addEventListener('click', () => fi.click());
+dz.addEventListener('click', e => { if (e.target === dz || e.target.closest('.di, .dt')) fi.click(); });
 dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('ov'); });
 dz.addEventListener('dragleave', () => dz.classList.remove('ov'));
 dz.addEventListener('drop', e => {
